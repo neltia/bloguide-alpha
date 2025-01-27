@@ -1,11 +1,12 @@
 "use client"
 
-import { ErrorDisplay } from "@/components/error-display"
-import { NoticeBoard } from "@/components/notice-board"
-import { useEffect, useState } from "react"
+import { ErrorDisplay } from "@/components/error-display";
+import { NoticeBoard } from "@/components/notice-board";
+import type { Notice } from "@/types/notice"; // Add this line
+import { useEffect, useState } from "react";
 
 export default function NoticePage() {
-  const [notices, setNotices] = useState([])
+  const [notices, setNotices] = useState<Notice[]>([])
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -15,7 +16,7 @@ export default function NoticePage() {
         if (!response.ok) {
           throw new Error("Failed to fetch notices")
         }
-        const data = await response.json()
+        const data: Notice[] = await response.json() // Update this line
         setNotices(data)
       } catch (error) {
         console.error("Error fetching notices:", error)
@@ -43,7 +44,7 @@ export default function NoticePage() {
 }
 
 // Sample notices data (moved from NoticeBoard component)
-const sampleNotices = [
+const sampleNotices: Notice[] = [
   {
     id: 1,
     title: "BloGuide 베타 서비스 오픈",
