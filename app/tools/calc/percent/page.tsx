@@ -123,23 +123,23 @@ export default function PercentCalculator() {
             <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] gap-2 items-center mb-2">
               <Input
                 type="number"
-                name="partialValue2"
-                value={values.partialValue2}
-                onChange={handleInputChange}
-                placeholder="일부 값"
-              />
-              <span>÷</span>
-              <Input
-                type="number"
                 name="totalValue2"
                 value={values.totalValue2}
                 onChange={handleInputChange}
                 placeholder="전체 값"
               />
-              <span>× 100 =</span>
+              <span>중</span>
+              <Input
+                type="number"
+                name="partialValue2"
+                value={values.partialValue2}
+                onChange={handleInputChange}
+                placeholder="일부 값"
+              />
+              <span>의 비율 =</span>
               <Input type="number" value={formatResult(values.result2)} readOnly />
             </div>
-            <p className="text-sm text-gray-500">예: 20은 100의 20%입니다.</p>
+            <p className="text-sm text-gray-500">예: 100 중 20은 20%입니다.</p>
           </div>
 
           <div>

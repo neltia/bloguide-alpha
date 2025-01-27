@@ -2,22 +2,11 @@
 
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Calendar, LinkIcon, Percent, Search } from "lucide-react"
+import { Calendar, Code, LinkIcon, Percent, Search } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
 const toolCategories = [
-  {
-    name: "인코딩/디코딩",
-    tools: [
-      {
-        name: "URL 디코딩 및 인코딩",
-        description: "URL을 디코딩하거나 인코딩합니다.",
-        href: "/tools/url-encoder-decoder",
-        icon: LinkIcon,
-      },
-    ],
-  },
   {
     name: "계산기",
     tools: [
@@ -32,6 +21,23 @@ const toolCategories = [
         description: "특정 날짜까지의 D-Day를 계산합니다.",
         href: "/tools/calc/d-day",
         icon: Calendar,
+      },
+    ],
+  },
+  {
+    name: "디코딩/인코딩",
+    tools: [
+      {
+        name: "URL 디코딩 및 인코딩",
+        description: "URL을 디코딩하거나 인코딩합니다.",
+        href: "/tools/crypto/url",
+        icon: LinkIcon,
+      },
+      {
+        name: "Base64 디코딩 및 인코딩",
+        description: "Base64 형식의 텍스트를 디코딩하거나 인코딩합니다.",
+        href: "/tools/crypto/base64",
+        icon: Code,
       },
     ],
   },
