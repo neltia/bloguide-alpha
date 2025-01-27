@@ -1,7 +1,6 @@
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { PenToolIcon as Tool } from "lucide-react"
+import { PenToolIcon } from "lucide-react"
 import Link from "next/link"
 
 export function Nav() {
@@ -14,14 +13,16 @@ export function Nav() {
             alpha
           </Badge>
         </Link>
-        <nav className="flex items-center space-x-2">
-          <Link href="/tools" className="p-2 flex items-center justify-center">
-            <Tool className="h-[1.2rem] w-[1.2rem]" />
-            <span className="sr-only">Tools</span>
+        <nav className="flex items-center space-x-4">
+          <Link
+            href="/tools"
+            className="p-2 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            aria-label="Tools"
+          >
+            <PenToolIcon className="h-5 w-5 md:mr-2" />
+            <span className="hidden md:inline">Tools</span>
           </Link>
           <ThemeToggle />
-          <Button variant="ghost">설정</Button>
-          <Button>로그인</Button>
         </nav>
       </div>
     </header>

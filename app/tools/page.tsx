@@ -2,10 +2,9 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import Link from "next/link"
 
 const tools = [
-  { name: "URL 인코딩/디코딩", description: "URL을 인코딩하거나 디코딩합니다.", href: "/tools/url-encoder-decoder" },
-  { name: "퍼센트 계산기", description: "퍼센트 계산을 쉽게 할 수 있습니다.", href: "/tools/percent-calc" },
-  { name: "시분초 계산기", description: "시간, 분, 초를 계산합니다.", href: "/tools/time-calc" },
-  { name: "이미지 검색기", description: "이미지를 검색하고 관리합니다.", href: "/tools/image-search" },
+  { name: "URL 디코딩 및 인코딩", description: "URL을 디코딩하거나 인코딩합니다.", href: "/tools/url-encoder-decoder" },
+  { name: "퍼센트 계산기", description: "퍼센트 계산을 쉽게 할 수 있습니다.", href: "/tools/calc/percent" },
+  { name: "D-Day 계산기", description: "특정 날짜까지의 D-Day를 계산합니다.", href: "/tools/calc/d-day" },
 ]
 
 export default function ToolsPage() {

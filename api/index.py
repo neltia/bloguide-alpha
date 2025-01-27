@@ -7,6 +7,11 @@ app = FastAPI(
 )
 
 
+@app.get("/api/search")
+def search_board():
+    return {"message": "Hello from FastAPI"}
+
+
 @app.get("/api/helloFastApi")
 def hello_fast_api():
     return {"message": "Hello from FastAPI"}
