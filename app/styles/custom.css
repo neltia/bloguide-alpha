@@ -1,0 +1,24 @@
+.custom-sheet-content [data-radix-collection-item] {
+    display: none !important;
+  }
+
+  .custom-sheet-content {
+    --scrollbar-size: 10px;
+    scrollbar-width: var(--scrollbar-size);
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+
+  .custom-sheet-content::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+  }
+
+  .custom-sheet-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-sheet-content::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    border: 3px solid transparent;
+  }
+

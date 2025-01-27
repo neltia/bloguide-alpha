@@ -1,3 +1,4 @@
+import { MobileSidebar } from "@/components/mobile-sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Badge } from "@/components/ui/badge"
 import { PenToolIcon } from "lucide-react"
@@ -7,12 +8,15 @@ export function Nav() {
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold flex items-center">
-          BloGuide
-          <Badge variant="secondary" className="ml-2 text-xs">
-            alpha
-          </Badge>
-        </Link>
+        <div className="flex items-center">
+          <MobileSidebar />
+          <Link href="/" className="text-2xl font-bold flex items-center ml-2 md:ml-0">
+            BloGuide
+            <Badge variant="secondary" className="ml-2 text-xs">
+              alpha
+            </Badge>
+          </Link>
+        </div>
         <nav className="flex items-center space-x-4">
           <Link
             href="/tools"

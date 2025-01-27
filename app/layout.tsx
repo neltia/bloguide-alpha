@@ -2,6 +2,7 @@ import { Footer } from "@/components/footer"
 import { Nav } from "@/components/nav"
 import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
+import "./styles/custom.css"
 
 export default function RootLayout({
   children,

@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
+import { useState, type KeyboardEvent } from "react"
 
 export default function UrlEncoderDecoder() {
   const [input, setInput] = useState("")
@@ -32,6 +32,13 @@ export default function UrlEncoderDecoder() {
     }
   }
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleProcess()
+    }
+  }
+
   const contentBlock = (
     <div className="space-y-6">
       <div className="flex items-center justify-end space-x-2 mb-4">
@@ -51,8 +58,9 @@ export default function UrlEncoderDecoder() {
           id="input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="여기에 입력하세요. (또는 붙여넣으세요)"
-          className="min-h-[200px] font-mono text-base placeholder:font-sans placeholder:text-sm" // Increased height and font size
+          className="min-h-[200px] font-sans text-base placeholder:font-mono placeholder:text-base"
         />
       </div>
 
@@ -66,8 +74,9 @@ export default function UrlEncoderDecoder() {
           id="output"
           value={output}
           readOnly
+          onKeyDown={handleKeyDown}
           placeholder="결과는 여기에 표시됩니다"
-          className="min-h-[200px] font-mono text-base placeholder:font-sans placeholder:text-sm" // Increased height and font size
+          className="min-h-[200px] font-sans text-base placeholder:font-mono placeholder:text-base"
         />
       </div>
     </div>
