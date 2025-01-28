@@ -1,2 +1,14 @@
+# api framework
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
+
+# db
+upstash-redis==1.2.0
+
+# extends
+ujson==5.10.0
+python-dotenv==1.0.1
+pytz==2024.2
+
+# tool
+pytrends==4.9.2
