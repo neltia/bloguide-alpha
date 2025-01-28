@@ -37,22 +37,10 @@ def get_google_trends(keyword: str, timeframe: str = "now 7-d"):
                 "value": int(row[keyword]) if not row[keyword] is None else 0
             })
 
-        # pytrends.related_queries() 등으로 연관 검색어도 가져올 수 있음
-        related_queries = []
-        try:
-            related = pytrends.related_queries()
-            if related and keyword in related:
-                ranked_list = related[keyword].get("top", None)
-                if ranked_list is not None and not ranked_list.empty:
-                    related_queries = ranked_list.head(5).to_dict(orient="records")
-        except Exception as e:
-            print(f"Error fetching related queries: {e}")
-
         return {
             "keyword": keyword,
             "timeframe": timeframe,
-            "data": trend_data,
-            "related_queries": related_queries,
+            "data": trend_data
         }
     except pytrends.exceptions.TooManyRequestsError:
         return {

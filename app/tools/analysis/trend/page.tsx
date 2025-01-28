@@ -15,47 +15,82 @@ interface TrendData {
 }
 
 interface TrendResponse {
-  keyword: string
-  timeframe: string
-  data: TrendData[]
-  error?: string
+  result: {
+    keyword: string
+    timeframe: string
+    data: TrendData[]
+  }
 }
 
 const timeframeOptions = [
   { value: "now 7-d", label: "최근 7일" },
   { value: "now 30-d", label: "최근 30일" },
-  { value: "now 90-d", label: "최근 90일" },
 ]
 
 export default function TrendSearch() {
-  const [keyword, setKeyword] = useState("")
+  const [inputKeyword, setInputKeyword] = useState("") // For input field
+  const [searchedKeyword, setSearchedKeyword] = useState("") // For display
   const [timeframe, setTimeframe] = useState("now 7-d")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [data, setData] = useState<TrendData[]>([])
+  const [hasSearched, setHasSearched] = useState(false)
+
+  const processData = (rawData: TrendData[]): TrendData[] => {
+    if (!Array.isArray(rawData) || rawData.length === 0) {
+      return []
+    }
+
+    const dailyData = rawData.reduce<{ [key: string]: number[] }>((acc, curr) => {
+      const date = curr.date
+      if (!acc[date]) {
+        acc[date] = []
+      }
+      acc[date].push(curr.value)
+      return acc
+    }, {})
+
+    return Object.entries(dailyData)
+      .map(([date, values]) => ({
+        date,
+        value: Math.round(values.reduce((sum, val) => sum + val, 0) / values.length),
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date))
+  }
 
   const handleSearch = async () => {
-    if (!keyword.trim()) {
+    if (!inputKeyword.trim()) {
       setError("키워드를 입력해주세요.")
       return
     }
 
     setLoading(true)
     setError(null)
+    setHasSearched(true)
 
     try {
-      const response = await fetch(`/api/trends?keyword=${encodeURIComponent(keyword)}&timeframe=${timeframe}`)
+      const response = await fetch(`/api/trends?keyword=${encodeURIComponent(inputKeyword)}&timeframe=${timeframe}`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const result: TrendResponse = await response.json()
 
-      if (result.error) {
-        setError(result.error)
-        setData([])
+      if (!result.result?.data) {
+        setError("데이터를 찾을 수 없습니다.")
+        return
+      }
+
+      const processedData = processData(result.result.data)
+      if (processedData.length === 0) {
+        setError("검색 결과가 없습니다.")
       } else {
-        setData(result.data)
+        setData(processedData)
+        setSearchedKeyword(inputKeyword) // Update the displayed keyword only after successful search
       }
     } catch (err) {
+      console.error("Error fetching data:", err)
       setError("데이터를 불러오는 중 오류가 발생했습니다.")
-      setData([])
     } finally {
       setLoading(false)
     }
@@ -70,8 +105,8 @@ export default function TrendSearch() {
             <div className="flex-1">
               <Input
                 placeholder="검색할 키워드를 입력하세요"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
+                value={inputKeyword}
+                onChange={(e) => setInputKeyword(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
             </div>
@@ -108,10 +143,17 @@ export default function TrendSearch() {
         </Alert>
       )}
 
+      {hasSearched && !error && data.length === 0 && (
+        <Alert variant="default" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>검색 결과가 없습니다.</AlertDescription>
+        </Alert>
+      )}
+
       {data.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>&ldquo;{keyword}&rdquo; 키워드 검색량</CardTitle>
+            <CardTitle>&ldquo;{searchedKeyword}&rdquo; 키워드 검색량</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[400px] w-full">

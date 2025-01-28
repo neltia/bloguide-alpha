@@ -3,6 +3,10 @@ from typing import Optional, List, Any
 from upstash_redis import Redis
 import ujson
 import os
+from dotenv import load_dotenv
+from api.logger import logger
+
+load_dotenv()
 
 # 환경변수로부터 Redis 클라이언트 생성
 moka_KV_REST_API_URL = os.getenv("moka_KV_REST_API_URL")
@@ -19,7 +23,7 @@ def redis_setex_string(key: str, value: str, ttl: int) -> None:
         # ex=ttl 로 EXPIRE 지정
         redis_client.set(key, value, ex=ttl)
     except Exception as e:
-        print(f"[Redis] SETEX (string) error: {e}")
+        logger.error(f"[Redis] SETEX (string) error for key='{key}': {e}")
 
 
 # 문자열 저장/조회
@@ -34,7 +38,7 @@ def redis_get_string(key: str) -> Optional[str]:
             return res.decode("utf-8")
         return str(res)
     except Exception as e:
-        print(f"[Redis] GET (string) error: {e}")
+        logger.error(f"[Redis] GET (string) error for key='{key}': {e}")
         return None
 
 
@@ -53,7 +57,7 @@ def redis_setex_list(key: str, values: List[Any], ttl: int) -> None:
         # - expire(TTL) 설정
         redis_client.expire(key, ttl)
     except Exception as e:
-        print(f"[Redis] SETEX (list) error: {e}")
+        logger.error(f"[Redis] SETEX (list) error for key='{key}': {e}")
 
 
 # 리스트(list) 조회
@@ -68,7 +72,7 @@ def redis_get_list(key: str) -> List[str]:
             result.append(item.decode("utf-8") if isinstance(item, bytes) else item)
         return result
     except Exception as e:
-        print(f"[Redis] GET (list) error: {e}")
+        logger.error(f"[Redis] GET (list) error for key='{key}': {e}")
         return []
 
 
@@ -79,7 +83,7 @@ def redis_setex_json(key: str, value: dict, ttl: int = DEFAULT_REDIS_TTL) -> Non
         json_str = ujson.dumps(value, reject_bytes=False)
         redis_client.set(key, json_str, ex=ttl)
     except Exception as e:
-        print(f"[Redis] SETEX (json) error: {e}")
+        logger.error(f"[Redis] SETEX (json) error for key='{key}': {e}")
 
 
 # JSON(dict) 조회
@@ -95,5 +99,5 @@ def redis_get_json(key: str) -> Optional[dict]:
         # - str
         return ujson.loads(res.encode("utf-8"))
     except Exception as e:
-        print(f"[Redis] GET (json) error: {e}")
+        logger.error(f"[Redis] GET (json) error for key='{key}': {e}")
         return None
