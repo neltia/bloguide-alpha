@@ -1,32 +1,12 @@
 from fastapi import FastAPI, Request
-from contextlib import asynccontextmanager
-from api.db.neon import async_engine, init_db
-
 from api.routers.feedback_router import router as feedback_router
 
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 
-# Lifespan 이벤트 핸들러 정의
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("FastAPI Server Start")
-
-    # 데이터베이스 초기화
-    await init_db()
-    print("DB conn connected")
-
-    yield  # FastAPI 실행
-
-    print("FastAPI Server terminated")
-    await async_engine.dispose()
-    print("DB conn closed")
-
-
 # app
 app = FastAPI(
-    lifespan=lifespan,
     root_path="/api",
     docs_url="/docs",
     openapi_url="/openapi.json",

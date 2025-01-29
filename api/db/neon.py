@@ -19,16 +19,17 @@ Base = declarative_base()
 
 # Dependency: DB 세션
 async def get_db():
-    async with AsyncSessionLocal() as session:
+    session = AsyncSessionLocal()
+    try:
         yield session
+    finally:
+        await session.close()
 
 
 # 데이터베이스 테이블이 존재하는지 확인하는 함수
 async def is_db_initialized():
-    async with async_engine.begin() as conn:
-        # run_sync를 사용해 동기 함수 래핑
+    async with async_engine.connect() as conn:
         table_names = await conn.run_sync(_check_tables_sync)
-        # 테이블이 하나라도 있으면 True
         return bool(table_names)
 
 
@@ -41,6 +42,6 @@ def _check_tables_sync(sync_conn):
 # 테이블 생성 함수
 async def init_db():
     if not await is_db_initialized():
-        async with async_engine.begin() as conn:
+        async with async_engine.connect() as conn:
             await conn.run_sync(Base.metadata.create_all)
     print("Database initialized")

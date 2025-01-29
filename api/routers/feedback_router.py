@@ -1,4 +1,4 @@
-# routes/trend_router.py
+# routes/feedback_router.py
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.db.neon import get_db

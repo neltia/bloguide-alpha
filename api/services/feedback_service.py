@@ -1,3 +1,4 @@
+# services/feedback_service.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from api.models.feedback import Feedback
@@ -14,9 +15,13 @@ async def create_feedback(db: AsyncSession, feedback: FeedbackCreate) -> Feedbac
         message=feedback.message
     )
     db.add(new_feedback)
-    await db.commit()
-    await db.refresh(new_feedback)
-    return FeedbackResponse.model_validate(new_feedback)
+    try:
+        await db.commit()
+        await db.refresh(new_feedback)
+        return FeedbackResponse.model_validate(new_feedback)
+    except Exception as e:
+        await db.rollback()
+        raise e
 
 
 # 모든 피드백 조회
