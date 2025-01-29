@@ -1,9 +1,11 @@
+import asyncio
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from api.config import ASYNC_DATABASE_URL
 
 # SQLAlchemy 비동기 엔진 생성
+asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())
 async_engine = create_async_engine(ASYNC_DATABASE_URL, echo=True)
 
 # 비동기 세션 생성

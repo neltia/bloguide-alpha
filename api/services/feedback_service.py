@@ -5,10 +5,14 @@ from api.models.feedback import Feedback
 from api.models.feedback import FeedbackCreate, FeedbackResponse
 from api.logger import logger
 from typing import List
+import asyncio
 
 
 # 피드백을 데이터베이스에 저장
 async def create_feedback(db: AsyncSession, feedback: FeedbackCreate) -> FeedbackResponse:
+    print(f"FastAPI Event Loop: {asyncio.get_running_loop()}")  # ✅ FastAPI의 루프 확인
+    print(f"DB Session: {db}")  # ✅ DB 세션이 올바르게 전달되는지 확인
+
     new_feedback = Feedback(
         name=feedback.name,
         email=feedback.email,
