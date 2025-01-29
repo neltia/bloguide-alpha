@@ -1,4 +1,3 @@
-from contextlib import asynccontextmanager
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -19,13 +18,9 @@ Base = declarative_base()
 
 
 # Dependency: DB 세션
-@asynccontextmanager
 async def get_db():
-    session = AsyncSessionLocal()
-    try:
+    async with AsyncSessionLocal() as session:
         yield session
-    finally:
-        await session.close()
 
 
 # 데이터베이스 테이블이 존재하는지 확인하는 함수
