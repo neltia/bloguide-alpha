@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -18,6 +19,7 @@ Base = declarative_base()
 
 
 # Dependency: DB 세션
+@asynccontextmanager
 async def get_db():
     session = AsyncSessionLocal()
     try:
@@ -41,7 +43,6 @@ def _check_tables_sync(sync_conn):
 
 # 테이블 생성 함수
 async def init_db():
-    if not await is_db_initialized():
-        async with async_engine.connect() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     print("Database initialized")
