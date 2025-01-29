@@ -7,7 +7,7 @@ from typing import Literal
 class Feedback(Base):
     __tablename__ = "feedback"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False)
     feedback_type = Column(String(50), nullable=False)

@@ -19,7 +19,8 @@ async def create_feedback(feedback: FeedbackCreate, db: AsyncSession = Depends(g
         logger.info(str(res))
         return res
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        logger.error(f"API error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Database error")
 
 
 # feedback 조회
@@ -28,4 +29,5 @@ async def get_feedbacks(db: AsyncSession = Depends(get_db)):
     try:
         return await feedback_service.get_feedbacks(db)
     except Exception as e:
+        logger.error(f"API error: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
