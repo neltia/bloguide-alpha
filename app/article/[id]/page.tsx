@@ -9,10 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
 import { MoreVertical } from "lucide-react"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism"
+import rehypeAutolinkHeadings from "rehype-autolink-headings"
+import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
 import { testArticleData, testProfileData } from "../../utils/testData"
 
@@ -33,8 +36,61 @@ interface ProfileData {
   avatar: string
 }
 
-interface RightSidebarProps {
-  profile: ProfileData
+interface TocItem {
+  id: string
+  text: string
+  level: number
+}
+
+const components = {
+  h1: ({ node, ...props }: any) => <h1 {...props} className="text-3xl font-bold mt-8 mb-4 scroll-margin-top-24" />,
+  h2: ({ node, ...props }: any) => <h2 {...props} className="text-2xl font-semibold mt-6 mb-3 scroll-margin-top-24" />,
+  h3: ({ node, ...props }: any) => <h3 {...props} className="text-xl font-medium mt-4 mb-2 scroll-margin-top-24" />,
+  p: ({ node, ...props }: any) => <p {...props} className="text-base mb-4 leading-relaxed" />,
+  ul: ({ node, ...props }: any) => <ul {...props} className="list-disc list-inside mb-4 pl-4" />,
+  ol: ({ node, ...props }: any) => <ol {...props} className="list-decimal list-inside mb-4 pl-4" />,
+  li: ({ node, ...props }: any) => <li {...props} className="mb-1" />,
+  blockquote: ({ node, ...props }: any) => (
+    <blockquote {...props} className="border-l-4 border-gray-300 pl-4 italic my-4 text-gray-600" />
+  ),
+  code: ({ node, inline, className, children, ...props }: any) => {
+    const match = /language-(\w+)/.exec(className || "")
+    return !inline && match ? (
+      <SyntaxHighlighter style={tomorrow} language={match[1]} PreTag="div" {...props} className="rounded-md my-4">
+        {String(children).replace(/\n$/, "")}
+      </SyntaxHighlighter>
+    ) : (
+      <code {...props} className={className}>
+        {children}
+      </code>
+    )
+  },
+  pre: ({ node, ...props }: any) => <pre {...props} className="bg-gray-100 rounded-md p-4 overflow-x-auto my-4" />,
+  img: ({ node, ...props }: any) => (
+    <div className="my-4">
+      <Image
+        {...props}
+        layout="responsive"
+        width={700}
+        height={475}
+        className="rounded-lg"
+        alt={props.alt || "Article image"}
+      />
+    </div>
+  ),
+  a: ({ node, ...props }: any) => <a {...props} className="text-blue-600 hover:underline" />,
+  table: ({ node, ...props }: any) => (
+    <div className="overflow-x-auto my-4">
+      <table {...props} className="min-w-full divide-y divide-gray-200" />
+    </div>
+  ),
+  th: ({ node, ...props }: any) => (
+    <th
+      {...props}
+      className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+    />
+  ),
+  td: ({ node, ...props }: any) => <td {...props} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" />,
 }
 
 export default function ArticleViewer({ params }: { params: { id: string } }) {
@@ -44,6 +100,7 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [isUsingTestData, setIsUsingTestData] = useState(false)
+  const [toc, setToc] = useState<TocItem[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,7 +110,12 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data = await response.json()
-        setArticle({
+
+        if (!data || Object.keys(data).length === 0) {
+          throw new Error("No data received from API")
+        }
+
+        const article: ArticleData = {
           id: data.id || params.id,
           title: data.title || "제목 없음",
           content: data.content || "",
@@ -62,14 +124,16 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
           category: data.category || "미분류",
           likes: data.likes || 0,
           comments: data.comments || 0,
-        })
+        }
+        setArticle(article)
         setError(null)
         setIsUsingTestData(false)
+        generateToc(article.content)
       } catch (error) {
         console.error("Error fetching article data:", error)
         setArticle(testArticleData)
         setIsUsingTestData(true)
-        setError(`API를 사용할 수 없어 테스트 데이터를 표시합니다.`)
+        generateToc(testArticleData.content)
       } finally {
         setIsLoading(false)
       }
@@ -77,6 +141,17 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
 
     fetchData()
   }, [params.id])
+
+  const generateToc = (content: string) => {
+    const headings = content.match(/^#{1,3} .+$/gm) || []
+    const tocItems: TocItem[] = headings.map((heading) => {
+      const level = heading.match(/^#+/)?.[0].length || 0
+      const text = heading.replace(/^#+\s/, "")
+      const id = text.toLowerCase().replace(/[^\w]+/g, "-")
+      return { id, text, level }
+    })
+    setToc(tocItems)
+  }
 
   const handleEdit = () => {
     setIsEditing(true)
@@ -87,6 +162,7 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
       if (isUsingTestData) {
         setArticle((prev) => (prev ? { ...prev, content: newContent } : null))
         setIsEditing(false)
+        generateToc(newContent)
         return
       }
 
@@ -102,6 +178,7 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
       }
       setArticle((prev) => (prev ? { ...prev, content: newContent } : null))
       setIsEditing(false)
+      generateToc(newContent)
     } catch (error) {
       console.error("Error saving article:", error)
       setError(error instanceof Error ? error.message : "글을 저장하는 데 실패했습니다.")
@@ -123,6 +200,12 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
       {error && (
         <div className="mb-8">
           <ErrorDisplay message={error} />
+        </div>
+      )}
+      {isUsingTestData && (
+        <div className="mb-8 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+          <p className="font-bold">주의</p>
+          <p>현재 테스트 데이터를 표시하고 있습니다. API 연결에 문제가 있을 수 있습니다.</p>
         </div>
       )}
       <div className="flex flex-col lg:flex-row">
@@ -155,38 +238,15 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
               </DropdownMenu>
             </div>
           </div>
-          <hr className="my-4 border-gray-200" />
+          <Separator className="my-4" />
           {isEditing ? (
             <MarkdownEditor content={article.content} onSave={handleSave} />
           ) : (
             <div className="prose prose-lg max-w-none mt-4 notion-like">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                components={{
-                  code({ node, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || "")
-                    return !match ? (
-                      <code {...props} className={className}>
-                        {children}
-                      </code>
-                    ) : (
-                      <SyntaxHighlighter style={tomorrow} language={match[1]} PreTag="div" className="rounded-md">
-                        {String(children).replace(/\n$/, "")}
-                      </SyntaxHighlighter>
-                    )
-                  },
-                  // Customize other elements for a Notion-like appearance
-                  h1: ({ node, ...props }) => <h1 {...props} className="text-4xl font-bold mt-8 mb-4" />,
-                  h2: ({ node, ...props }) => <h2 {...props} className="text-3xl font-semibold mt-6 mb-3" />,
-                  h3: ({ node, ...props }) => <h3 {...props} className="text-2xl font-medium mt-4 mb-2" />,
-                  p: ({ node, ...props }) => <p {...props} className="mb-4 leading-relaxed" />,
-                  ul: ({ node, ...props }) => <ul {...props} className="list-disc list-inside mb-4" />,
-                  ol: ({ node, ...props }) => <ol {...props} className="list-decimal list-inside mb-4" />,
-                  li: ({ node, ...props }) => <li {...props} className="mb-1" />,
-                  blockquote: ({ node, ...props }) => (
-                    <blockquote {...props} className="border-l-4 border-gray-300 pl-4 italic my-4" />
-                  ),
-                }}
+                rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
+                components={components}
               >
                 {article.content}
               </ReactMarkdown>
@@ -194,7 +254,7 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
           )}
         </div>
         <div className="hidden lg:block lg:w-1/4 pl-8">
-          <RightSidebar profile={profile} />
+          <RightSidebar profile={profile} toc={toc} />
         </div>
       </div>
       <Separator className="my-8" />

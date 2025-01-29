@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Heart, MessageCircle, Share2 } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
+import { useCallback } from "react"
 
 interface ProfileData {
   name: string
@@ -10,11 +10,25 @@ interface ProfileData {
   avatar: string
 }
 
-interface RightSidebarProps {
-  profile: ProfileData
+interface TocItem {
+  id: string
+  text: string
+  level: number
 }
 
-export default function RightSidebar({ profile }: RightSidebarProps) {
+interface RightSidebarProps {
+  profile: ProfileData
+  toc: TocItem[]
+}
+
+export default function RightSidebar({ profile, toc }: RightSidebarProps) {
+  const handleTocClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault()
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [])
   return (
     <div className="space-y-6">
       <Card>
@@ -43,21 +57,17 @@ export default function RightSidebar({ profile }: RightSidebarProps) {
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            <li>
-              <Link href="#section1" className="text-blue-500 hover:underline">
-                App Router
-              </Link>
-            </li>
-            <li>
-              <Link href="#section2" className="text-blue-500 hover:underline">
-                서버 컴포넌트
-              </Link>
-            </li>
-            <li>
-              <Link href="#section3" className="text-blue-500 hover:underline">
-                스트리밍
-              </Link>
-            </li>
+            {toc.map((item) => (
+              <li key={item.id} className={`ml-${(item.level - 1) * 4}`}>
+                <a
+                  href={`#${item.id}`}
+                  className="text-blue-500 hover:underline cursor-pointer"
+                  onClick={(e) => handleTocClick(e, item.id)}
+                >
+                  {item.text}
+                </a>
+              </li>
+            ))}
           </ul>
         </CardContent>
       </Card>
@@ -66,11 +76,11 @@ export default function RightSidebar({ profile }: RightSidebarProps) {
           <div className="flex justify-between items-center">
             <Button variant="ghost" size="sm">
               <Heart className="h-4 w-4 mr-2" />
-              좋아요 0 {/* Static value for likes */}
+              좋아요 0
             </Button>
             <Button variant="ghost" size="sm">
               <MessageCircle className="h-4 w-4 mr-2" />
-              댓글 0 {/* Static value for comments */}
+              댓글 0
             </Button>
             <Button variant="ghost" size="sm">
               <Share2 className="h-4 w-4 mr-2" />
