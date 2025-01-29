@@ -23,7 +23,7 @@ async def create_feedback(feedback: FeedbackCreate, db: AsyncSession = Depends(g
 
 
 # feedback 조회
-@router.get("/feedback", response_model=List[FeedbackResponse], dependencies=[Depends(verify_admin)])
+@router.get("/feedback/list", response_model=List[FeedbackResponse], dependencies=[Depends(verify_admin)])
 async def get_feedbacks(db: AsyncSession = Depends(get_db)):
     try:
         return await feedback_service.get_feedbacks(db)

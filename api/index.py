@@ -27,14 +27,14 @@ async def lifespan(app: FastAPI):
 # app
 app = FastAPI(
     lifespan=lifespan,
-    docs_url="/api/docs",
-    openapi_url="/api/openapi.json",
-    root_path="/api"
+    root_path="/api",
+    docs_url="/docs",
+    openapi_url="/openapi.json",
 )
 
 # routers
 # - feedback
-app.include_router(feedback_router)
+app.include_router(feedback_router, tags=["cs"])
 
 
 # exception handler
@@ -56,12 +56,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 # 테스트 단계 API, 테스트 데이터로 api 틀만 구성
-@app.get("/api/search")
+@app.get("/search")
 def search_board():
     return {"message": "Hello from FastAPI"}
 
 
-@app.get("/api/notice/list")
+@app.get("/notice/list")
 def notice_list():
     data = [
         {
