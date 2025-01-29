@@ -7,12 +7,12 @@
         "methods": ["GET", "POST"]
       },
       {
-        "src": "/docs",
-        "dest": "http://127.0.0.1:8000/docs"
+        "src": "/api/docs",
+        "dest": "http://127.0.0.1:8000/api/docs"
       },
       {
-        "src": "/openapi.json",
-        "dest": "http://127.0.0.1:8000/openapi.json"
+        "src": "/api/openapi.json",
+        "dest": "http://127.0.0.1:8000/api/openapi.json"
       }
     ]
   }
