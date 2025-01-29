@@ -28,13 +28,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     lifespan=lifespan,
     docs_url="/api/docs",
-    openapi_url="/api/openapi.json"
+    openapi_url="/api/openapi.json",
+    root_path="/api"
 )
 
 # routers
 # - feedback
-app.include_router(feedback_router, prefix="/api")
-# - tools
+app.include_router(feedback_router)
 
 
 # exception handler
