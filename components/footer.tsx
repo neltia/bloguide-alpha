@@ -3,9 +3,9 @@ import Link from "next/link"
 
 export function Footer() {
   return (
-    <footer className="bg-gray-100 dark:bg-gray-800 border-t">
+    <footer className="bg-gray-100 dark:bg-gray-800 border-t mt-12">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="font-bold mb-4">BloGuide</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">블로그 작성 및 관리를 위한 종합 플랫폼</p>
@@ -29,13 +29,23 @@ export function Footer() {
             <h4 className="font-semibold mb-4">법적 고지</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/terms" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                  서비스 이용약관
+                <Link href="/legal" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                  이용약관 및 개인정보처리방침
                 </Link>
               </li>
               <li>
                 <Link href="/open-source" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
                   오픈 소스
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-4">고객 센터</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/feedback" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                  피드백 및 제안
                 </Link>
               </li>
             </ul>

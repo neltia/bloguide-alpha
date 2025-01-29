@@ -8,6 +8,12 @@ import "./styles/custom.css"
 export const metadata: Metadata = {
   title: 'bloguide alpha',
   description: 'BloGuide는 블로그 작성, 관리, 그리고 분석을 위한 종합 플랫폼입니다.',
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+    ]
+  }
 }
 
 export default function RootLayout({
