@@ -2,7 +2,7 @@
 
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Calendar, Code, LinkIcon, Percent, Search, TrendingUp } from "lucide-react"
+import { Calendar, Code, LinkIcon, Percent, Search } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -39,17 +39,6 @@ const toolCategories = [
         href: "/tools/crypto/base64",
         icon: Code,
       },
-    ],
-  },
-  {
-    name: "분석",
-    tools: [
-      {
-        name: "트렌드 키워드 검색",
-        description: "키워드의 시간대별 검색량을 분석합니다.",
-        href: "/tools/analysis/trend",
-        icon: TrendingUp,
-      }
     ],
   },
 ]

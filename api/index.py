@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 from api.db.neon import async_engine, init_db
 
 from api.routers.feedback_router import router as feedback_router
-from api.routers.trend_router import router as trend_router
 
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -36,7 +35,6 @@ app = FastAPI(
 # - feedback
 app.include_router(feedback_router, prefix="/api")
 # - tools
-app.include_router(trend_router, prefix="/api")
 
 
 # exception handler
