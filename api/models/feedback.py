@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, Boolean
-from api.db.neon import Base
+from api.db import Base
 from pydantic import BaseModel, EmailStr
 from typing import Literal
 

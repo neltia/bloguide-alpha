@@ -1,6 +1,6 @@
 from sqlalchemy import Column, BigInteger, String, Boolean, DateTime
 from sqlalchemy.schema import Identity
-from api.db.neon import Base
+from api.db import Base
 from datetime import datetime, timezone
 from pydantic import BaseModel
 from typing import Optional

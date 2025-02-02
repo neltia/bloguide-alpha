@@ -35,9 +35,3 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=400,
         content={"detail": "Invalid input", "errors": errors},
     )
-
-
-# 테스트 단계 API, 테스트 데이터로 api 틀만 구성
-@app.get("/search")
-def search_board():
-    return {"message": "Hello from FastAPI"}

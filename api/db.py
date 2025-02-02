@@ -1,21 +1,66 @@
-# db/redis.py
+# - postgresql
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+# - redis
 from typing import Optional, List, Any
 from upstash_redis import Redis
 import ujson
 import os
 from dotenv import load_dotenv
-from api.logger import logger
+from api.common import logger
 
+# env
 load_dotenv()
 
-# 환경변수로부터 Redis 클라이언트 생성
+# SQLAlchemy 동기 엔진 생성
+DATABASE_NAME = os.getenv("POSTGRES_DATABASE", "neondb")
+DATABASE_HOST = os.getenv("POSTGRES_HOST")
+DATABASE_USER = os.getenv("POSTGRES_USER")
+DATABASE_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+DATABASE_URL = f"postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}/{DATABASE_NAME}"
+engine = create_engine(DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+Base = declarative_base()
+
+# Redis 클라이언트 생성
 moka_KV_REST_API_URL = os.getenv("moka_KV_REST_API_URL")
 moka_KV_REST_API_TOKEN = os.getenv("moka_KV_REST_API_TOKEN")
-
 redis_client = Redis(url=moka_KV_REST_API_URL, token=moka_KV_REST_API_TOKEN)
 DEFAULT_REDIS_TTL = 86400  # ttl: 1day
 
 
+""" PostgreSQL """
+# DB 세션 종속성
+def get_db():
+    with SessionLocal() as session:
+        yield session
+
+
+# 데이터베이스 테이블이 존재하는지 확인하는 함수
+def is_db_initialized():
+    with engine.connect() as conn:
+        table_names = _check_tables_sync(conn)
+        return bool(table_names)
+
+
+# sync_conn에 대해 inspector 사용
+def _check_tables_sync(sync_conn):
+    inspector = inspect(sync_conn)
+    return inspector.get_table_names()
+
+
+# 테이블 생성 함수
+def init_db():
+    if not is_db_initialized():
+        with engine.begin() as conn:
+            Base.metadata.create_all(conn)
+    print("Database initialized")
+
+
+"""
+Redis
+"""
 # 문자열 저장/조회
 # - Upstash Redis에 문자열 value를 저장 + TTL 설정
 def redis_setex_string(key: str, value: str, ttl: int) -> None:

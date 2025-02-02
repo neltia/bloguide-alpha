@@ -1,5 +1,5 @@
-from api.models.notice import Notice, NoticeResponse
-from api.db.redis import redis_get_json, redis_setex_json, redis_delete_key
+from api.models.board import Notice, NoticeResponse
+from api.db import redis_get_json, redis_setex_json, redis_delete_key
 from sqlalchemy.orm import Session
 
 

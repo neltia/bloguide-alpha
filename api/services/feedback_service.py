@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.future import select
 from api.models.feedback import Feedback
 from api.models.feedback import FeedbackCreate, FeedbackResponse
-from api.logger import logger
+from api.common import logger
 from typing import List
 
 

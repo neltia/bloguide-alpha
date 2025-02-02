@@ -1,6 +1,11 @@
-# config/logger.py
+from fastapi import Header, HTTPException
+from dotenv import load_dotenv
 import logging
 import sys
+import os
+
+load_dotenv()
+ADMIN_API_KEY = os.getenv("ADMIN_KEY")
 
 
 # 전역 로깅 설정 함수
@@ -23,6 +28,11 @@ def setup_logging():
     logger.addHandler(stream_handler)
 
     return logger
+
+
+async def verify_admin(api_key: str = Header(...)):
+    if api_key != ADMIN_API_KEY:
+        raise HTTPException(status_code=403, detail="Unauthorized access")
 
 
 # 초기화 시 자동 설정

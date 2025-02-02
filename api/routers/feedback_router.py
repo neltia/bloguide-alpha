@@ -1,11 +1,10 @@
 # routes/feedback_router.py
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from api.db.neon import get_db
+from api.db import get_db
 from api.services import feedback_service
 from api.models.feedback import FeedbackCreate, FeedbackResponse
-from api.common.verify import verify_admin
-from api.logger import logger
+from api.common import logger, verify_admin
 from typing import List
 
 router = APIRouter()

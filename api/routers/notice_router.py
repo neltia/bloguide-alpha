@@ -1,10 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from api.db.neon import get_db
+from api.db import get_db
 from api.services import notice_service
-from api.models.notice import NoticeCreate, NoticeResponse
-from api.common.verify import verify_admin
-from api.logger import logger
+from api.models.board import NoticeCreate, NoticeResponse
+from api.common import logger, verify_admin
 from typing import List
 
 router = APIRouter()
