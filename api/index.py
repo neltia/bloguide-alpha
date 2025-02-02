@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from api.routers.feedback_router import router as feedback_router
+from api.routers.notice_router import router as notice_router
 
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -13,8 +14,9 @@ app = FastAPI(
 )
 
 # routers
-# - feedback
+# - cs
 app.include_router(feedback_router, tags=["cs"])
+app.include_router(notice_router, tags=["cs"])
 
 
 # exception handler
@@ -39,34 +41,3 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.get("/search")
 def search_board():
     return {"message": "Hello from FastAPI"}
-
-
-@app.get("/notice/list")
-def notice_list():
-    data = [
-        {
-            "id": 1,
-            "title": "BloGuide 알파 서비스 오픈",
-            "date": "2025-06-20",
-            "author": "관리자",
-            "content": "BloGuide 알파 서비스가 오픈되었습니다. 많은 관심과 피드백 부탁드립니다.",
-            "isImportant": True,
-        },
-        {
-            "id": 2,
-            "title": "업데이트 안내",
-            "date": "2025-01-29",
-            "author": "관리자",
-            "content": "예정된 업데이트 내용을 안내드립니다. 주요 기능 개선 및 버그 수정이 포함되어 있습니다.",
-            "isImportant": False,
-        },
-        {
-            "id": 3,
-            "title": "신규 기능 제안 받습니다",
-            "date": "2025-01-29",
-            "author": "관리자",
-            "content": "사용자 여러분의 의견을 듣고 싶습니다. BloGuide에 추가되었으면 하는 기능을 제안해주세요.",
-            "isImportant": True,
-        }
-    ]
-    return data

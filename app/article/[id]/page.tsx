@@ -9,11 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
 import { MoreVertical } from "lucide-react"
+import { useTheme } from "next-themes"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism"
+import { tomorrow, vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
 import rehypeAutolinkHeadings from "rehype-autolink-headings"
 import rehypeSlug from "rehype-slug"
 import remarkGfm from "remark-gfm"
@@ -42,58 +43,8 @@ interface TocItem {
   level: number
 }
 
-const components = {
-  h1: ({ node, ...props }: any) => <h1 {...props} className="text-3xl font-bold mt-8 mb-4 scroll-margin-top-24" />,
-  h2: ({ node, ...props }: any) => <h2 {...props} className="text-2xl font-semibold mt-6 mb-3 scroll-margin-top-24" />,
-  h3: ({ node, ...props }: any) => <h3 {...props} className="text-xl font-medium mt-4 mb-2 scroll-margin-top-24" />,
-  p: ({ node, ...props }: any) => <p {...props} className="text-base mb-4 leading-relaxed" />,
-  ul: ({ node, ...props }: any) => <ul {...props} className="list-disc list-inside mb-4 pl-4" />,
-  ol: ({ node, ...props }: any) => <ol {...props} className="list-decimal list-inside mb-4 pl-4" />,
-  li: ({ node, ...props }: any) => <li {...props} className="mb-1" />,
-  blockquote: ({ node, ...props }: any) => (
-    <blockquote {...props} className="border-l-4 border-gray-300 pl-4 italic my-4 text-gray-600" />
-  ),
-  code: ({ node, inline, className, children, ...props }: any) => {
-    const match = /language-(\w+)/.exec(className || "")
-    return !inline && match ? (
-      <SyntaxHighlighter style={tomorrow} language={match[1]} PreTag="div" {...props} className="rounded-md my-4">
-        {String(children).replace(/\n$/, "")}
-      </SyntaxHighlighter>
-    ) : (
-      <code {...props} className={className}>
-        {children}
-      </code>
-    )
-  },
-  pre: ({ node, ...props }: any) => <pre {...props} className="bg-gray-100 rounded-md p-4 overflow-x-auto my-4" />,
-  img: ({ node, ...props }: any) => (
-    <div className="my-4">
-      <Image
-        {...props}
-        layout="responsive"
-        width={700}
-        height={475}
-        className="rounded-lg"
-        alt={props.alt || "Article image"}
-      />
-    </div>
-  ),
-  a: ({ node, ...props }: any) => <a {...props} className="text-blue-600 hover:underline" />,
-  table: ({ node, ...props }: any) => (
-    <div className="overflow-x-auto my-4">
-      <table {...props} className="min-w-full divide-y divide-gray-200" />
-    </div>
-  ),
-  th: ({ node, ...props }: any) => (
-    <th
-      {...props}
-      className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-    />
-  ),
-  td: ({ node, ...props }: any) => <td {...props} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500" />,
-}
-
 export default function ArticleViewer({ params }: { params: { id: string } }) {
+  const { theme } = useTheme()
   const [article, setArticle] = useState<ArticleData | null>(null)
   const [profile, setProfile] = useState<ProfileData>(testProfileData)
   const [error, setError] = useState<string | null>(null)
@@ -101,6 +52,117 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
   const [isEditing, setIsEditing] = useState(false)
   const [isUsingTestData, setIsUsingTestData] = useState(false)
   const [toc, setToc] = useState<TocItem[]>([])
+
+  const components = {
+    h1: ({ node, ...props }: any) => (
+      <h1
+        {...props}
+        className={`text-3xl font-bold mt-8 mb-4 scroll-margin-top-24 ${theme === "dark" ? "text-white" : "text-black"}`}
+      />
+    ),
+    h2: ({ node, ...props }: any) => (
+      <h2
+        {...props}
+        className={`text-2xl font-semibold mt-6 mb-3 scroll-margin-top-24 ${
+          theme === "dark" ? "text-white" : "text-black"
+        }`}
+      />
+    ),
+    h3: ({ node, ...props }: any) => (
+      <h3
+        {...props}
+        className={`text-xl font-medium mt-4 mb-2 scroll-margin-top-24 ${theme === "dark" ? "text-white" : "text-black"}`}
+      />
+    ),
+    p: ({ node, ...props }: any) => (
+      <p
+        {...props}
+        className={`text-base mb-4 leading-relaxed ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+      />
+    ),
+    ul: ({ node, ...props }: any) => (
+      <ul
+        {...props}
+        className={`list-disc list-inside mb-4 pl-4 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+      />
+    ),
+    ol: ({ node, ...props }: any) => (
+      <ol
+        {...props}
+        className={`list-decimal list-inside mb-4 pl-4 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+      />
+    ),
+    li: ({ node, ...props }: any) => (
+      <li {...props} className={`mb-1 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`} />
+    ),
+    blockquote: ({ node, ...props }: any) => (
+      <blockquote
+        {...props}
+        className={`border-l-4 border-gray-300 pl-4 italic my-4 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}
+      />
+    ),
+    code: ({ node, inline, className, children, ...props }: any) => {
+      const match = /language-(\w+)/.exec(className || "")
+      return !inline && match ? (
+        <SyntaxHighlighter
+          style={theme === "dark" ? vscDarkPlus : tomorrow}
+          language={match[1]}
+          PreTag="div"
+          {...props}
+          className="rounded-md my-4"
+        >
+          {String(children).replace(/\n$/, "")}
+        </SyntaxHighlighter>
+      ) : (
+        <code {...props} className={className}>
+          {children}
+        </code>
+      )
+    },
+    pre: ({ node, ...props }: any) => (
+      <pre
+        {...props}
+        className={`rounded-md p-4 overflow-x-auto my-4 ${theme === "dark" ? "bg-gray-800" : "bg-gray-100"}`}
+      />
+    ),
+    img: ({ node, ...props }: any) => (
+      <div className="my-4">
+        <Image
+          {...props}
+          layout="responsive"
+          width={700}
+          height={475}
+          className="rounded-lg"
+          alt={props.alt || "Article image"}
+        />
+      </div>
+    ),
+    a: ({ node, ...props }: any) => (
+      <a {...props} className={`hover:underline ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`} />
+    ),
+    table: ({ node, ...props }: any) => (
+      <div className="overflow-x-auto my-4">
+        <table
+          {...props}
+          className={`min-w-full divide-y ${theme === "dark" ? "divide-gray-700" : "divide-gray-200"}`}
+        />
+      </div>
+    ),
+    th: ({ node, ...props }: any) => (
+      <th
+        {...props}
+        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+          theme === "dark" ? "bg-gray-800 text-gray-400" : "bg-gray-50 text-gray-500"
+        }`}
+      />
+    ),
+    td: ({ node, ...props }: any) => (
+      <td
+        {...props}
+        className={`px-6 py-4 whitespace-nowrap text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-500"}`}
+      />
+    ),
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,6 +195,9 @@ export default function ArticleViewer({ params }: { params: { id: string } }) {
         console.error("Error fetching article data:", error)
         setArticle(testArticleData)
         setIsUsingTestData(true)
+        setError(
+          `API에서 데이터를 가져오는 데 실패했습니다. 테스트 데이터를 표시합니다. 오류: ${error instanceof Error ? error.message : String(error)}`,
+        )
         generateToc(testArticleData.content)
       } finally {
         setIsLoading(false)

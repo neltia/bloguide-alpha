@@ -101,3 +101,12 @@ def redis_get_json(key: str) -> Optional[dict]:
     except Exception as e:
         logger.error(f"[Redis] GET (json) error for key='{key}': {e}")
         return None
+
+
+# 키 삭제 함수
+def redis_delete_key(key: str) -> None:
+    try:
+        redis_client.delete(key)
+        logger.info(f"[Redis] Key deleted: {key}")
+    except Exception as e:
+        logger.error(f"[Redis] DELETE error for key='{key}': {e}")
