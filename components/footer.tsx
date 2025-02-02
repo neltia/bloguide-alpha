@@ -3,7 +3,7 @@ import Link from "next/link"
 
 export function Footer() {
   return (
-    <footer className="bg-gray-100 dark:bg-gray-800 border-t mt-12">
+    <footer className="bg-gray-100 dark:bg-gray-800 border-t">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -19,8 +19,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                  자주 묻는 질문
+                <Link href="/release" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                  릴리즈 노트
                 </Link>
               </li>
             </ul>
@@ -48,6 +48,11 @@ export function Footer() {
                   피드백 및 제안
                 </Link>
               </li>
+              <li>
+                <Link href="/faq" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                  자주 묻는 질문
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -58,7 +63,7 @@ export function Footer() {
             </p>
             <div className="flex space-x-4 mt-4 md:mt-0">
               <a
-                href="https://blog.naver.com/dsz08082"
+                href="https://blog.naver.com/your-blog-url"
                 className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -67,7 +72,7 @@ export function Footer() {
                 <BookOpen className="h-6 w-6" />
               </a>
               <a
-                href="https://github.com/neltia"
+                href="https://github.com/your-github-url"
                 className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
                 target="_blank"
                 rel="noopener noreferrer"

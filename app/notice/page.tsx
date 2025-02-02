@@ -1,8 +1,11 @@
 "use client"
 
+import { formatDate } from "@/app/utils/dateFormat"
 import { ErrorDisplay } from "@/components/error-display"
+import { LoadingTable } from "@/components/loading-table"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
@@ -26,11 +29,13 @@ export default function NoticePage() {
   const [notices, setNotices] = useState<Notice[]>([])
   const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const { theme } = useTheme()
 
   useEffect(() => {
     const fetchNotices = async () => {
       try {
+        setIsLoading(true)
         const response = await fetch("/api/notice/list")
         if (!response.ok) {
           throw new Error("Failed to fetch notices")
@@ -41,6 +46,8 @@ export default function NoticePage() {
         console.error("Error fetching notices:", error)
         setError("공지사항을 불러오는 데 실패했습니다. 테스트 데이터를 표시합니다.")
         setNotices(sampleNotices)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -154,65 +161,85 @@ export default function NoticePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">공지사항</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">공지사항</h1>
+        {selectedNotice && (
+          <Button variant="outline" onClick={() => setSelectedNotice(null)}>
+            목록으로 돌아가기
+          </Button>
+        )}
+      </div>
       {error && (
         <div className="mb-6">
           <ErrorDisplay message={error} />
         </div>
       )}
       {selectedNotice ? (
-        <div>
-          <div className="flex justify-end mb-4">
-            <Button onClick={() => setSelectedNotice(null)}>목록으로 돌아가기</Button>
-          </div>
-          <Card>
-            <CardHeader>
-              <CardTitle>{selectedNotice.title}</CardTitle>
-              <div className="text-sm text-gray-500">
-                {selectedNotice.author} | {selectedNotice.date}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-lg max-w-none mt-4 notion-like">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
-                  components={components}
-                >
-                  {selectedNotice.content}
-                </ReactMarkdown>
+        <Card>
+          {isLoading ? (
+            <CardContent className="p-6 space-y-4">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-48" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
               </div>
             </CardContent>
-          </Card>
-        </div>
+          ) : (
+            <>
+              <CardHeader>
+                <CardTitle>{selectedNotice.title}</CardTitle>
+                <div className="text-sm text-gray-500">
+                  {selectedNotice.author} | {formatDate(selectedNotice.date)}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="prose prose-lg max-w-none mt-4 notion-like">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
+                    components={components}
+                  >
+                    {selectedNotice.content}
+                  </ReactMarkdown>
+                </div>
+              </CardContent>
+            </>
+          )}
+        </Card>
       ) : (
         <Card>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[120px]">날짜</TableHead>
-                  <TableHead>제목</TableHead>
-                  <TableHead className="w-[100px]">작성자</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {notices.map((notice) => (
-                  <TableRow
-                    key={notice.id}
-                    className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
-                    onClick={() => setSelectedNotice(notice)}
-                  >
-                    <TableCell className="whitespace-nowrap">{notice.date}</TableCell>
-                    <TableCell>
-                      {notice.isImportant && <span className="text-red-500 font-bold mr-2">[중요]</span>}
-                      {notice.title}
-                    </TableCell>
-                    <TableCell>{notice.author}</TableCell>
+            {isLoading ? (
+              <LoadingTable columns={3} rows={5} />
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[120px]">날짜</TableHead>
+                    <TableHead>제목</TableHead>
+                    <TableHead className="w-[100px]">작성자</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {notices.map((notice) => (
+                    <TableRow
+                      key={notice.id}
+                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                      onClick={() => setSelectedNotice(notice)}
+                    >
+                      <TableCell className="whitespace-nowrap">{formatDate(notice.date)}</TableCell>
+                      <TableCell>
+                        {notice.isImportant && <span className="text-red-500 font-bold mr-2">[중요]</span>}
+                        {notice.title}
+                      </TableCell>
+                      <TableCell>{notice.author}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       )}
