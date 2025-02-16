@@ -29,7 +29,7 @@ export function Footer() {
             <h4 className="font-semibold mb-4">법적 고지</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/legal" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                <Link href="/terms" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
                   이용약관 및 개인정보처리방침
                 </Link>
               </li>
