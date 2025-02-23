@@ -1,12 +1,13 @@
 "use client"
 
+import { trackToolUsage } from "@/app/utils/analytics"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { useState, type KeyboardEvent } from "react"
+import { useEffect, useState, type KeyboardEvent } from "react"
 
 export default function UrlEncoderDecoder() {
   const [input, setInput] = useState("")
@@ -39,6 +40,16 @@ export default function UrlEncoderDecoder() {
     }
   }
 
+  // Track page visit duration
+  useEffect(() => {
+    const startTime = Date.now()
+
+    return () => {
+      const duration = (Date.now() - startTime) / 1000 // Convert to seconds
+      trackToolUsage("url-encoder", duration)
+    }
+  }, [])
+
   const contentBlock = (
     <div className="space-y-6">
       <div className="flex items-center justify-end space-x-2 mb-4">
@@ -60,7 +71,7 @@ export default function UrlEncoderDecoder() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="여기에 입력하세요. (또는 붙여넣으세요)"
-          className="min-h-[200px] font-sans text-base placeholder:font-mono placeholder:text-base"
+          className="min-h-[200px] font-mono text-base placeholder:font-mono placeholder:text-base"
         />
       </div>
 
@@ -76,7 +87,7 @@ export default function UrlEncoderDecoder() {
           readOnly
           onKeyDown={handleKeyDown}
           placeholder="결과는 여기에 표시됩니다"
-          className="min-h-[200px] font-sans text-base placeholder:font-mono placeholder:text-base"
+          className="min-h-[200px] font-mono text-base placeholder:font-mono placeholder:text-base"
         />
       </div>
     </div>
