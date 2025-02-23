@@ -61,8 +61,8 @@ export function FeedbackList() {
                     : item.status === "처리중"
                       ? "secondary"
                       : item.status === "확인됨"
-                        ? "warning"
-                        : "outline"
+                        ? "outline"
+                        : "secondary"
                 }
               >
                 {item.status}

@@ -117,7 +117,7 @@ export default function ApiManagement() {
                 <TableRow key={endpoint.id}>
                   <TableCell className="font-mono">{endpoint.endpoint}</TableCell>
                   <TableCell>
-                    <Badge variant={endpoint.status === "정상" ? "default" : "warning"}>{endpoint.status}</Badge>
+                    <Badge variant={endpoint.status === "정상" ? "default" : "secondary"}>{endpoint.status}</Badge>
                   </TableCell>
                   <TableCell>{endpoint.latency}</TableCell>
                   <TableCell>{endpoint.calls}</TableCell>

@@ -7,19 +7,19 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { AlertCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Line,
-    LineChart,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts"
 
 const timeRanges = [
@@ -138,7 +138,7 @@ export function DetailedAnalytics() {
   return (
     <div className="space-y-6">
       {showPartialErrors && (
-        <Alert variant="warning">
+        <Alert variant="default">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>일부 데이터를 불러올 수 없습니다</AlertTitle>
           <AlertDescription>
